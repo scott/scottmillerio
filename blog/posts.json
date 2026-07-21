@@ -1,5 +1,11 @@
 [
   {
+    "slug": "boring-agents-win",
+    "title": "Boring Agents Win",
+    "date": "2026-07-21",
+    "description": "The agents that ship in production are the ones nobody wants to demo."
+  },
+  {
     "slug": "hello-world",
     "title": "Hello World",
     "date": "2026-07-08",
