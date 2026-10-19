@@ -1,0 +1,114 @@
+<html lang="en">
+  <head>
+    <title>I Built My X Dashboard as One Binary, and the Agent Kept It That Way - Scott Miller</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+
+  <body class="font-mono" style="background-image:url('../../topo.png');">
+    <div class="max-w-3xl mx-auto px-4 py-10 md:py-16">
+      <header class="mb-8">
+        <a href="../" class="text-sm hover:underline">&larr; back to blog</a>
+        <h1 class="text-2xl font-bold mt-4 mb-1">I Built My X Dashboard as One Binary, and the Agent Kept It That Way</h1>
+        <div class="text-sm text-neutral-700">October 19, 2026</div>
+        <p class="mt-2 text-neutral-800">How I built xstats, a small self-hosted X stats dashboard, with Grok Bot's help, and why keeping it to one Go binary and one SQLite file made the agent a better collaborator.</p>
+      </header>
+
+      <article class="bg-white/90 shadow rounded-lg p-6 md:p-8 space-y-4 max-w-prose mx-auto">
+        <p>I wanted a simple thing: a page that shows how my X accounts are doing. Follower count, how that number moved over the last week and month, and how each recent post performed. I did not want another SaaS login, another monthly bill, or another dashboard that does forty things when I need four.</p>
+        <p>So I built one. It is called <a href="https://github.com/scott/xstats" class="underline">xstats</a>, it is open source under MIT, and I built it with Grok Bot's help. The part I want to write about is not the dashboard itself. It is how much easier it was to work with an agent once I decided the whole thing had to stay small.</p>
+        <h2 class="text-lg font-bold">The constraint: one binary, one file of data</h2>
+        <p>The rule I set at the start was that xstats ships as a single Go binary. The frontend is static HTML and JS, embedded into the binary with <code>go:embed</code>. Storage is SQLite through <code>modernc.org/sqlite</code>, which is pure Go, so the build runs with <code>CGO_ENABLED=0</code> and there are no runtime dependencies to install on the server.</p>
+        <p>That gives you a very short list of moving parts:</p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li><code>xstats serve</code>, listening on localhost</li>
+          <li><code>xstats.db</code>, one SQLite file</li>
+          <li>Caddy in front, handling TLS and basic auth</li>
+        </ul>
+        <p>That is the whole system. The server it runs on can be tiny. The README says 512 MB is plenty, and it is, because there is almost nothing there.</p>
+        <p>I have built enough software to know that the size of a system is mostly a decision you make early and then defend. What surprised me is how much that decision mattered for the agent, not just for me.</p>
+        <h2 class="text-lg font-bold">Small systems are easier to hand to an agent</h2>
+        <p>When the whole app fits in your head, it also fits in the agent's context. There is no service mesh to explain, no ORM conventions to follow, no five-repo dance to make one change. I could describe a change in a couple of sentences and the agent had everything it needed to make it.</p>
+        <p>A good example: the first version had two buttons to switch between accounts. I asked for a dropdown instead, ordered by an optional <code>XSTATS_ACCOUNTS</code> setting, working in both light and dark themes and on a phone. That came back as one focused commit. It touched the parts it needed to and nothing else, because there was nothing else to touch.</p>
+        <p>Another one: I wanted to see "today," not just finished days. The data model stores one row per account per day and one row per post per day, and re-ingesting a day upserts. So instead of inventing a new hourly pipeline, the fix was to push the same day more than once and make sure a re-push fully replaces that day's post rows. The chart labels today's point as in progress. Small change, real test added, done. A bigger system would have tempted both of us into building something more clever than the problem required.</p>
+        <p>This connects to something I wrote about before: <a href="/blog/boring-agents-win/" class="underline">boring agents win</a>. Boring systems win too, and they are the ones agents are actually good at changing.</p>
+        <h2 class="text-lg font-bold">The dashboard does not call the X API</h2>
+        <p>One design choice I like a lot: xstats never talks to X. It has an ingest endpoint, <code>POST /api/ingest</code>, that takes a JSON bundle with a bearer token. The bundle is just the X API v2 responses saved as they came back, so you do not have to reshape anything.</p>
+        <p>That split exists for a practical reason. The data collection runs as a Grok Bot routine, because that is where I have X read access. The server just stores and draws. If I ever want server-side polling with my own developer credentials, that is a separate decision, and the dashboard does not care where the JSON came from.</p>
+        <p>It also means the dashboard holds no X credentials at all. The only secret on the server is the ingest token, and the push script reads it from a file and hands it to curl on stdin so it never shows up on a command line. The dashboard password is sent over SSH stdin and hashed on the server with <code>caddy hash-password</code>, so only the bcrypt hash is stored.</p>
+        <p>None of that is fancy. It is the kind of thing you get right when the system is small enough that you can actually see every place a secret could leak.</p>
+        <h2 class="text-lg font-bold">Deploys you are not afraid of</h2>
+        <p>The deploy script targets a fresh Ubuntu server and is idempotent. Nothing gets compiled on the server. You build locally, run <code>deploy.sh</code>, and it installs Caddy from its official repo, creates a system user, drops in the binary and a systemd unit, and writes the token with tight permissions.</p>
+        <p>Two small details make it feel safe to run often. Each deploy keeps the previous binary around as <code>xstats.prev</code>, and it backs up the database with a timestamp before touching anything. If a change goes sideways, rollback is one copy and a restart.</p>
+        <p>When an agent is making changes for you, this matters more than usual. I approve the pull requests, but I want the cost of a bad merge to be a minute of my time, not an evening. Cheap rollback is what lets me say yes faster.</p>
+        <h2 class="text-lg font-bold">What I would tell someone building with agents</h2>
+        <p>A few things I took away from this one:</p>
+        <ol class="list-decimal pl-5 space-y-2">
+          <li><strong>Pick the boring stack on purpose.</strong> Go, SQLite, a reverse proxy. The agent knew all of it well, and so did I, which made review quick.</li>
+          <li><strong>Keep the data format dumb.</strong> Raw API responses in, upserts by day. Rerunning is always safe, which means mistakes are cheap.</li>
+          <li><strong>Separate collection from display.</strong> The thing with credentials and the thing with a web page should not be the same thing.</li>
+          <li><strong>Use fake data for anything public.</strong> The screenshots in the README come from a seed script that generates made-up accounts. I never had to scrub a real screenshot.</li>
+          <li><strong>Make every change a small PR.</strong> The history of xstats is a handful of commits, each one about one thing. That is easy to read later, for me and for the next agent.</li>
+        </ol>
+        <h2 class="text-lg font-bold">Try it</h2>
+        <p>If you want your own little X stats page, the repo is at <a href="https://github.com/scott/xstats" class="underline">github.com/scott/xstats</a>. It is one binary, it runs on a small server, and it does not try to be anything more than it is. These are my own views and my own side project.</p>
+        <p>If you build something on top of it, or strip it down even further, I would like to see it.</p>
+      </article>
+
+      <section class="mt-10 bg-white/90 shadow rounded-lg p-6 md:p-8 max-w-prose mx-auto">
+        <h2 class="text-sm font-bold text-neutral-700 mb-3">More posts</h2>
+        <ul id="more-posts" class="space-y-2 text-sm"></ul>
+      </section>
+
+      <footer class="mt-10 flex items-center justify-center space-x-6 text-xs text-neutral-700">
+        <a href="https://github.com/scott" class="flex items-center space-x-1 hover:underline">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z" />
+          </svg>
+          <span>GitHub</span>
+        </a>
+        <a href="https://linkedin.com/in/optimizeit" class="flex items-center space-x-1 hover:underline">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z" />
+          </svg>
+          <span>LinkedIn</span>
+        </a>
+      </footer>
+    </div>
+
+    <script>
+      (function () {
+        var list = document.getElementById('more-posts');
+        if (!list) return;
+
+        var parts = window.location.pathname.split('/').filter(function (p) { return p.length > 0; });
+        var last = parts[parts.length - 1];
+        var currentSlug = (last === 'index.html' ? parts[parts.length - 2] : last) || '';
+
+        fetch('../posts.json')
+          .then(function (r) { return r.json(); })
+          .then(function (posts) {
+            var others = posts.filter(function (p) { return p.slug !== currentSlug; }).slice(0, 5);
+            if (others.length === 0) {
+              list.parentElement.style.display = 'none';
+              return;
+            }
+            list.innerHTML = others.map(function (post) {
+              var date = new Date(post.date + 'T00:00:00').toLocaleDateString('en-US', {
+                year: 'numeric', month: 'long', day: 'numeric'
+              });
+              return (
+                '<li class="flex items-baseline space-x-2">' +
+                  '<a href="../' + post.slug + '/" class="hover:underline">' + post.title + '</a>' +
+                  '<span class="text-neutral-600">&middot;</span>' +
+                  '<span class="text-neutral-600">' + date + '</span>' +
+                '</li>'
+              );
+            }).join('');
+          })
+          .catch(function () { list.parentElement.style.display = 'none'; });
+      })();
+    </script>
+  </body>
+</html>

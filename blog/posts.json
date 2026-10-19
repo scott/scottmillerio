@@ -1,5 +1,11 @@
 [
   {
+    "slug": "one-binary-dashboard",
+    "title": "I Built My X Dashboard as One Binary, and the Agent Kept It That Way",
+    "date": "2026-10-19",
+    "description": "How I built xstats, a small self-hosted X stats dashboard, with Grok Bot's help, and why keeping it to one Go binary and one SQLite file made the agent a better collaborator."
+  },
+  {
     "slug": "boring-agents-win",
     "title": "Boring Agents Win",
     "date": "2026-07-21",
