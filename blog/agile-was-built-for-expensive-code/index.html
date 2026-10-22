@@ -1,0 +1,125 @@
+<html lang="en">
+  <head>
+    <title>Agile Was Built for Expensive Code - Scott Miller</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+
+  <body class="font-mono" style="background-image:url('../../topo.png');">
+    <div class="max-w-3xl mx-auto px-4 py-10 md:py-16">
+      <header class="mb-8">
+        <a href="../" class="text-sm hover:underline">&larr; back to blog</a>
+        <h1 class="text-2xl font-bold mt-4 mb-1">Agile Was Built for Expensive Code</h1>
+        <div class="text-sm text-neutral-700">October 22, 2026</div>
+        <p class="mt-2 text-neutral-800">When agents write most of the code, the hard part of agile shifts to intent, context, guardrails and verification. Here's what I think changes and what stays.</p>
+      </header>
+
+      <article class="bg-white/90 shadow rounded-lg p-6 md:p-8 space-y-4 max-w-prose mx-auto">
+        <p>For most of my career, the scarce thing on a software team was implementation. We had more ideas than hands, so the whole process was built around rationing engineering time. Story points, capacity planning, two-week sprints, grooming sessions. All of it exists to decide which small slice of the backlog gets built next.</p>
+        <p>That constraint is going away. When an agent can turn a clear request into a working change in minutes, building isn't the bottleneck anymore. The hard parts are now everything around the code: saying clearly what you want, giving the agent enough context to do it right, setting the limits it has to stay inside, and checking that what came back actually works.</p>
+        <p>I think that shift changes how agile should work more than any framework debate does.</p>
+        <h2 class="text-lg font-bold">Two camps, one shared observation</h2>
+        <p>The conversation right now splits roughly in two.</p>
+        <p>One camp says agile's principles still hold. Inspect, adapt, work toward clear goals, keep feedback loops short. What has to change is the practices, because ceremonies designed around human typing speed don't fit a team where agents do most of the typing.</p>
+        <p>The other camp says agile is structurally obsolete and wants something new in its place. One proposal I've seen called Agent-Driven Development makes intent the unit of work, and the humans act as editors and orchestrators instead of implementers.</p>
+        <p>I lean toward the second camp. I think agile's practices were built around rationing human implementation time, and once that constraint is gone, patching the ceremonies one at a time leaves you with a process designed for a problem you no longer have. I'd rather build around intent from the start than keep renaming sprint rituals.</p>
+        <p>The two camps still agree on more than they admit. Both say the human job is moving toward judgment, verification and system design. Both say "done" has to mean evidence, not a status change on a ticket. Where they split is whether you get there by adapting agile or by replacing it, and I think replacing it is the more honest answer.</p>
+        <h2 class="text-lg font-bold">Sprints get shorter, or go away</h2>
+        <p>A two-week sprint made sense when two weeks was roughly how long it took to build a meaningful batch of work. When an agent can do a batch overnight, a fixed two-week box starts to feel slow.</p>
+        <p>Teams are trying a few things. Some run daily cycles where agents work overnight and humans review during the day. Others drop the box entirely and move to continuous flow, where work gets pulled, built, reviewed and shipped one item at a time.</p>
+        <p>I don't think there's one right cadence yet. What I'd watch is where work piles up. If finished agent output sits waiting for review for days, the cycle length isn't the problem. Review is.</p>
+        <h2 class="text-lg font-bold">Planning becomes writing down intent</h2>
+        <p>This is the change I find most interesting. In a lot of teams, planning meant breaking work into tasks and estimating each one. Planning poker, capacity math, arguing over whether something is a 3 or a 5.</p>
+        <p>Estimation matters a lot less when implementation is cheap. What matters more is whether the request is clear enough that an agent builds the right thing the first time. Some people call this Intent Design: define the outcome, the success criteria, the constraints, and how much the agent is allowed to decide on its own.</p>
+        <p>In practice I think that looks like a short written plan for each piece of work:</p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>What should be true when this is done.</li>
+          <li>How we'll know, in terms someone can check.</li>
+          <li>What the agent must not touch.</li>
+          <li>Where it should stop and ask instead of guessing.</li>
+        </ul>
+        <p>That plan is also the cheapest place to catch mistakes. Fixing a wrong assumption in a few lines of text takes a minute. Fixing it after an agent has built on it takes much longer, and it takes a review cycle on top. So I'd rather spend planning time reading and pushing back on the plan than estimating tasks.</p>
+        <h2 class="text-lg font-bold">Grooming gets lighter</h2>
+        <p>Backlog refinement used to mean long tickets and long meetings. Some of that is going away on its own. Agents can help break work down, flag tickets that are missing acceptance criteria, and point out when two items overlap.</p>
+        <p>What doesn't go away is the need for a sharp definition of the work. If anything, strong specs, quick prototypes and clear acceptance criteria matter more than ever, because the agent will happily build exactly what you wrote, including the parts you didn't mean. A long ticket isn't the goal. A clear one is.</p>
+        <h2 class="text-lg font-bold">The human job changes</h2>
+        <p>If the agents are implementing, the people on the team spend their time on other things:</p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>Editing and orchestrating: deciding what gets built, in what order, by which agent.</li>
+          <li>Verifying: reading plans before work starts and checking results after.</li>
+          <li>Owning the system: architecture, quality bars, and the guardrails agents work inside.</li>
+        </ul>
+        <p>I think this is the part teams underestimate. Reviewing agent work is real work, and it doesn't shrink just because the code got cheaper. If anything there's more to review. The teams that do well will be the ones that decide on purpose where human attention goes, instead of letting it get spread thin across every diff.</p>
+        <h2 class="text-lg font-bold">Done means evidence</h2>
+        <p>The Definition of Done is getting stricter, and I think that's healthy. "The agent says it's finished" is a claim. Done should mean there's something a person can check: tests that ran, logs, a screenshot of the feature working, a review that signed off against the original plan.</p>
+        <p>That last part is the one I'd push hardest on. A review only means something if it checks the work against what was agreed before the work started. Otherwise you're just reading the agent's summary and hoping.</p>
+        <h2 class="text-lg font-bold">Agents as their own workstream</h2>
+        <p>One more pattern I'm seeing: teams treating agents as a parallel workstream with its own rules. Agents get their own capacity budget, a named person responsible for each one, and their own evidence requirements before anything merges.</p>
+        <p>I like this because it makes the cost visible. Agent work isn't free. It costs compute, and more importantly it costs review time. Giving it its own lane on the board means someone has to decide how much of it the team can actually absorb.</p>
+        <h2 class="text-lg font-bold">What I'd actually change first</h2>
+        <p>If I were running a team today, I wouldn't spend time tuning sprints. I'd build the process around intent, starting with three changes:</p>
+        <ol class="list-decimal pl-5 space-y-2">
+          <li>Replace estimation with a short written plan per item, reviewed by a person before any agent starts.</li>
+          <li>Make "done" mean evidence that someone can check in a couple of minutes.</li>
+          <li>Track where review time goes, and shorten the cycle only as fast as review can keep up.</li>
+        </ol>
+        <p>Short feedback loops and adapting to what you learn are still worth keeping. But I think the process agile built on top of them assumed code was the expensive part, and that's no longer true. The feedback loop used to run through the code. Now it runs through the intent you write down before the code exists, and the evidence you check after. I'd design the process around that directly instead of retrofitting sprints to fit it.</p>
+      </article>
+
+      <section class="mt-10 bg-white/90 shadow rounded-lg p-6 md:p-8 max-w-prose mx-auto">
+        <h2 class="text-sm font-bold text-neutral-700 mb-3">More posts</h2>
+        <ul id="more-posts" class="space-y-2 text-sm"></ul>
+      </section>
+
+      <footer class="mt-10 flex items-center justify-center space-x-6 text-xs text-neutral-700">
+        <a href="https://github.com/scott" class="flex items-center space-x-1 hover:underline">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z" />
+          </svg>
+          <span>GitHub</span>
+        </a>
+        <a href="https://linkedin.com/in/optimizeit" class="flex items-center space-x-1 hover:underline">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z" />
+          </svg>
+          <span>LinkedIn</span>
+        </a>
+      </footer>
+    </div>
+
+    <script>
+      (function () {
+        var list = document.getElementById('more-posts');
+        if (!list) return;
+
+        var parts = window.location.pathname.split('/').filter(function (p) { return p.length > 0; });
+        var last = parts[parts.length - 1];
+        var currentSlug = (last === 'index.html' ? parts[parts.length - 2] : last) || '';
+
+        fetch('../posts.json')
+          .then(function (r) { return r.json(); })
+          .then(function (posts) {
+            var others = posts.filter(function (p) { return p.slug !== currentSlug; }).slice(0, 5);
+            if (others.length === 0) {
+              list.parentElement.style.display = 'none';
+              return;
+            }
+            list.innerHTML = others.map(function (post) {
+              var date = new Date(post.date + 'T00:00:00').toLocaleDateString('en-US', {
+                year: 'numeric', month: 'long', day: 'numeric'
+              });
+              return (
+                '<li class="flex items-baseline space-x-2">' +
+                  '<a href="../' + post.slug + '/" class="hover:underline">' + post.title + '</a>' +
+                  '<span class="text-neutral-600">&middot;</span>' +
+                  '<span class="text-neutral-600">' + date + '</span>' +
+                '</li>'
+              );
+            }).join('');
+          })
+          .catch(function () { list.parentElement.style.display = 'none'; });
+      })();
+    </script>
+  </body>
+</html>

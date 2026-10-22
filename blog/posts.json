@@ -1,5 +1,11 @@
 [
   {
+    "slug": "agile-was-built-for-expensive-code",
+    "title": "Agile Was Built for Expensive Code",
+    "date": "2026-10-22",
+    "description": "When agents write most of the code, the hard part of agile shifts to intent, context, guardrails and verification. Here's what I think changes and what stays."
+  },
+  {
     "slug": "one-binary-dashboard",
     "title": "I Built My X Dashboard as One Binary, and the Agent Kept It That Way",
     "date": "2026-10-19",
