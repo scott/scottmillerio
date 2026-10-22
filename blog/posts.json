@@ -1,5 +1,11 @@
 [
   {
+    "slug": "agent-gtm-team",
+    "title": "My Side Project Has a Marketing Team of Agents. I Still Press Publish.",
+    "date": "2026-10-22",
+    "description": "What I learned setting up a small team of AI agents to run go-to-market for Gander, and why the rules about who can't do what mattered more than the prompts."
+  },
+  {
     "slug": "one-binary-dashboard",
     "title": "I Built My X Dashboard as One Binary, and the Agent Kept It That Way",
     "date": "2026-10-19",

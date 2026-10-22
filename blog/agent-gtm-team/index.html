@@ -1,0 +1,109 @@
+<html lang="en">
+  <head>
+    <title>My Side Project Has a Marketing Team of Agents. I Still Press Publish. - Scott Miller</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+
+  <body class="font-mono" style="background-image:url('../../topo.png');">
+    <div class="max-w-3xl mx-auto px-4 py-10 md:py-16">
+      <header class="mb-8">
+        <a href="../" class="text-sm hover:underline">&larr; back to blog</a>
+        <h1 class="text-2xl font-bold mt-4 mb-1">My Side Project Has a Marketing Team of Agents. I Still Press Publish.</h1>
+        <div class="text-sm text-neutral-700">October 22, 2026</div>
+        <p class="mt-2 text-neutral-800">What I learned setting up a small team of AI agents to run go-to-market for Gander, and why the rules about who can't do what mattered more than the prompts.</p>
+      </header>
+
+      <article class="bg-white/90 shadow rounded-lg p-6 md:p-8 space-y-4 max-w-prose mx-auto">
+        <p>I build software for a living and on the side. The building part has never been my problem. The part that always slips is everything after: positioning, writing, figuring out where people actually hang out, and showing up there consistently. On most of my past projects, go-to-market was the thing I meant to get to next week.</p>
+        <p>So for <a href="https://gander.md" class="underline">Gander</a>, my tool for live review of the markdown files agents write, I tried something different. I set up a small team of agents in Grok Bot to run go-to-market, each with one job, all talking in one group chat. I am the only human on the team, and I am the only one who can make anything public.</p>
+        <p>It has been running for a while now. Here is what I have learned, and most of it is about boundaries, not prompts.</p>
+        <h2 class="text-lg font-bold">One job per agent</h2>
+        <p>The team looks a lot like a tiny marketing org, on purpose:</p>
+        <ul class="list-disc pl-5 space-y-2">
+          <li><strong>Goose</strong> is head of GTM. It writes the weekly plan, hands out daily assignments, sends me a morning digest, and decides what to kill, keep, or defer.</li>
+          <li><strong>Riley</strong> owns positioning: who Gander is for, the messaging, and the list of claims we are allowed to make.</li>
+          <li><strong>Lane</strong> writes drafts: blog posts, X posts, launch copy.</li>
+          <li><strong>Scout</strong> handles distribution: SEO, where conversations are happening, and which ones are worth joining.</li>
+          <li><strong>Anchor</strong> is the reviewer. It is the only agent that can mark a draft ready for me.</li>
+          <li><strong>Helm</strong> deploys. It ships blog posts to production, and only after I say go.</li>
+        </ul>
+        <p>My first instinct was one big agent that does all of it. That fell apart quickly, for the same reason one person doing all of it falls apart. The agent that wrote a draft was also the one deciding it was good, and it was always very confident in its own work. Splitting the writer from the reviewer changed the quality more than any prompt tweak did. Anchor does not care how hard Lane worked on something. It checks the draft against the rules and either stamps it or sends it back.</p>
+        <h2 class="text-lg font-bold">The rules that actually matter are the "can't" rules</h2>
+        <p>The most useful lines in the whole setup are restrictions.</p>
+        <p>Nobody on the team publishes. Lane cannot post. Scout cannot post. Goose cannot post. Helm can deploy, but only after Anchor has marked the draft ready and I have explicitly said yes. Every X post, every blog post, every reply goes past me first.</p>
+        <p>Nobody invents traction. This sounds obvious, but language models love a confident number. Ask for a launch post and you will get "hundreds of teams already use it" unless something stops it. So Riley keeps a fence: a short document listing what Gander is, what it does, and which claims are allowed. Every claim in a draft has to point back to that file, the live site, or the docs. If it can't, it gets marked unknown and cut. I would much rather ship a smaller, true post than a bigger one I have to walk back.</p>
+        <p>There is one source of truth. Gander's facts live in one file that Riley owns and re-verifies against the live product. When the product changes, a feature gets renamed, or a default changes, that file gets updated first, and everything downstream reads from it. Without that, every agent slowly drifts into its own version of the product, and you end up with five slightly different descriptions of the same feature.</p>
+        <h2 class="text-lg font-bold">Plans and digests beat chat</h2>
+        <p>The group chat is where work gets handed off, but it is not where work lives. Plans, drafts, and checks are files. There is a weekly editorial plan every Friday with a topic, angle, owner, and ship date for each slot. Riley runs a narrative check every Sunday to catch drift. Goose sends a morning digest so I can see in a couple of minutes what happened yesterday and what needs my call today.</p>
+        <p>The digest turned out to be the piece that makes this sustainable. I do not want to read a long chat log every morning. I want a short list: here is what is ready for you, here is what is blocked, here is what we decided to drop. Most mornings my job is a handful of yeses, a few edits, and the occasional "no, not that."</p>
+        <p>This is the same pattern I keep coming back to with agents in general. The agent does the work, the work lands in a file, and a human reviews the file. It is basically the loop Gander is built around, which made it a pretty good way to dogfood my own product.</p>
+        <h2 class="text-lg font-bold">What I would tell someone trying this</h2>
+        <p><strong>Give each agent a narrow job and a clear "do not."</strong> A description of what an agent owns is useful. A description of what it is not allowed to touch is more useful.</p>
+        <p><strong>Separate the writer from the reviewer.</strong> Even when both are agents. Especially when both are agents.</p>
+        <p><strong>Keep the publish button for yourself.</strong> Agents are good at drafting at volume. That is exactly why you want a gate between drafting and posting. Anything that goes out under your name should cross your desk.</p>
+        <p><strong>Write the facts down once.</strong> A single source of truth file is boring, and it prevents most of the embarrassing mistakes.</p>
+        <p><strong>Expect to edit the team, not just the drafts.</strong> Roles change. Early on I had agents doing overlapping work, and the fix was usually a sharper role description, not a better draft.</p>
+        <h2 class="text-lg font-bold">What it has not solved</h2>
+        <p>Agents did not make distribution easy. They made it consistent. A brand new account with a handful of followers is still a brand new account, no matter how well-written the posts are. What changed is that the work actually happens every day instead of when I find a free evening, and that the stuff that goes out is true.</p>
+        <p>It also has not removed me from the loop, and I do not want it to. The interesting part of running a project is the judgment calls: what to say, what to skip, when something is ready. The team gets me to those calls faster, with the busywork already done. That is a trade I will take.</p>
+        <p>If you are building something and go-to-market keeps sliding to next week, try giving it to a small team of agents with strict rules. Just keep the publish button.</p>
+      </article>
+
+      <section class="mt-10 bg-white/90 shadow rounded-lg p-6 md:p-8 max-w-prose mx-auto">
+        <h2 class="text-sm font-bold text-neutral-700 mb-3">More posts</h2>
+        <ul id="more-posts" class="space-y-2 text-sm"></ul>
+      </section>
+
+      <footer class="mt-10 flex items-center justify-center space-x-6 text-xs text-neutral-700">
+        <a href="https://github.com/scott" class="flex items-center space-x-1 hover:underline">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z" />
+          </svg>
+          <span>GitHub</span>
+        </a>
+        <a href="https://linkedin.com/in/optimizeit" class="flex items-center space-x-1 hover:underline">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z" />
+          </svg>
+          <span>LinkedIn</span>
+        </a>
+      </footer>
+    </div>
+
+    <script>
+      (function () {
+        var list = document.getElementById('more-posts');
+        if (!list) return;
+
+        var parts = window.location.pathname.split('/').filter(function (p) { return p.length > 0; });
+        var last = parts[parts.length - 1];
+        var currentSlug = (last === 'index.html' ? parts[parts.length - 2] : last) || '';
+
+        fetch('../posts.json')
+          .then(function (r) { return r.json(); })
+          .then(function (posts) {
+            var others = posts.filter(function (p) { return p.slug !== currentSlug; }).slice(0, 5);
+            if (others.length === 0) {
+              list.parentElement.style.display = 'none';
+              return;
+            }
+            list.innerHTML = others.map(function (post) {
+              var date = new Date(post.date + 'T00:00:00').toLocaleDateString('en-US', {
+                year: 'numeric', month: 'long', day: 'numeric'
+              });
+              return (
+                '<li class="flex items-baseline space-x-2">' +
+                  '<a href="../' + post.slug + '/" class="hover:underline">' + post.title + '</a>' +
+                  '<span class="text-neutral-600">&middot;</span>' +
+                  '<span class="text-neutral-600">' + date + '</span>' +
+                '</li>'
+              );
+            }).join('');
+          })
+          .catch(function () { list.parentElement.style.display = 'none'; });
+      })();
+    </script>
+  </body>
+</html>
