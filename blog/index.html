@@ -6,11 +6,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
 
-  <body class="font-mono" style="background-image:url('../topo.png');">
+  <body class="font-mono" style="background-image:url('/topo.png');">
     <div class="max-w-2xl mx-auto px-4 py-10 md:py-16">
       <header class="mb-8">
         <h1 class="text-2xl font-bold mb-2">Blog</h1>
-        <a href="../" class="text-sm hover:underline">&larr; scottmiller.io</a>
+        <a href="/" class="text-sm hover:underline">&larr; scottmiller.io</a>
       </header>
 
       <main class="bg-white/90 shadow rounded-lg p-6 md:p-8">
@@ -18,22 +18,22 @@
         <noscript>
           <ul class="space-y-6">
             <li>
-              <a href="./agile-was-built-for-expensive-code/" class="font-bold hover:underline">Agile Was Built for Expensive Code</a>
+              <a href="/blog/agile-was-built-for-expensive-code/" class="font-bold hover:underline">Agile Was Built for Expensive Code</a>
               <div class="text-sm text-neutral-600">October 22, 2026</div>
               <p class="mt-1">When agents write most of the code, the hard part of agile shifts to intent, context, guardrails and verification. Here's what I think changes and what stays.</p>
             </li>
             <li>
-              <a href="./one-binary-dashboard/" class="font-bold hover:underline">I Built My X Dashboard as One Binary, and the Agent Kept It That Way</a>
+              <a href="/blog/one-binary-dashboard/" class="font-bold hover:underline">I Built My X Dashboard as One Binary, and the Agent Kept It That Way</a>
               <div class="text-sm text-neutral-600">October 19, 2026</div>
               <p class="mt-1">How I built xstats, a small self-hosted X stats dashboard, with Grok Bot's help, and why keeping it to one Go binary and one SQLite file made the agent a better collaborator.</p>
             </li>
             <li>
-              <a href="./boring-agents-win/" class="font-bold hover:underline">Boring Agents Win</a>
+              <a href="/blog/boring-agents-win/" class="font-bold hover:underline">Boring Agents Win</a>
               <div class="text-sm text-neutral-600">July 21, 2026</div>
               <p class="mt-1">The agents that ship in production are the ones nobody wants to demo.</p>
             </li>
             <li>
-              <a href="./hello-world/" class="font-bold hover:underline">Hello World</a>
+              <a href="/blog/hello-world/" class="font-bold hover:underline">Hello World</a>
               <div class="text-sm text-neutral-600">July 8, 2026</div>
               <p class="mt-1">Kicking off the blog with a quick hello.</p>
             </li>
@@ -62,7 +62,7 @@
         var list = document.getElementById('post-list');
         if (!list) return;
 
-        fetch('./posts.json')
+        fetch('/blog/posts.json')
           .then(function (r) { return r.json(); })
           .then(function (posts) {
             list.innerHTML = posts.map(function (post) {
@@ -71,7 +71,7 @@
               });
               return (
                 '<li>' +
-                  '<a href="./' + post.slug + '/" class="font-bold hover:underline">' + post.title + '</a>' +
+                  '<a href="/blog/' + post.slug + '/" class="font-bold hover:underline">' + post.title + '</a>' +
                   '<div class="text-sm text-neutral-600">' + date + '</div>' +
                   '<p class="mt-1">' + post.description + '</p>' +
                 '</li>'
