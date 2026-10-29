@@ -1,5 +1,12 @@
 [
   {
+    "slug": "review-the-plan",
+    "title": "Review the Plan, Not Just the Diff",
+    "date": "2026-10-29",
+    "description": "Why the cheapest place to catch an agent's mistake is the markdown plan it writes before any code, and why I built Gander to get a second person onto that plan.",
+    "tags": ["agents", "coding-tools", "ai-engineering", "gander", "side-projects"]
+  },
+  {
     "slug": "agile-was-built-for-expensive-code",
     "title": "Agile Was Built for Expensive Code",
     "date": "2026-10-22",
