@@ -1,0 +1,110 @@
+<html lang="en">
+  <head>
+    <title>Review the Plan, Not Just the Diff - Scott Miller</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+
+  <body class="font-mono" style="background-image:url('../../topo.png');">
+    <div class="max-w-3xl mx-auto px-4 py-10 md:py-16">
+      <header class="mb-8">
+        <a href="../" class="text-sm hover:underline">&larr; back to blog</a>
+        <h1 class="text-2xl font-bold mt-4 mb-1">Review the Plan, Not Just the Diff</h1>
+        <div class="text-sm text-neutral-700">October 29, 2026</div>
+        <p class="mt-2 text-neutral-800">Why the cheapest place to catch an agent's mistake is the markdown plan it writes before any code, and why I built Gander to get a second person onto that plan.</p>
+      </header>
+
+      <article class="bg-white/90 shadow rounded-lg p-6 md:p-8 space-y-4 max-w-prose mx-auto">
+        <p>Most of the conversation about reviewing agent work is about the diff. Did the tests pass, is the code readable, did it touch files it should not have. That review matters. But by the time I am reading a diff, the most important decisions were already made, usually a few minutes earlier, in a markdown file nobody else looked at.</p>
+        <p>When I ask a coding agent for anything bigger than a small fix, the first useful thing it produces is a plan. Sometimes it is called <code>plan.md</code>, sometimes it is a spec or a design note or a runbook. It says what the agent thinks the problem is, which files it will change, what it will leave alone, and in what order. Then it starts writing code against that plan.</p>
+        <p>That file is where I want a second set of eyes. Here is why, and what I built to make it easier.</p>
+        <h2 class="text-lg font-bold">A wrong plan produces confident, wrong code</h2>
+        <p>An agent that misunderstands the task does not write broken code. It writes clean, well-structured code that solves a slightly different problem. The tests it writes agree with it, because they were written from the same misunderstanding. The diff looks good. The PR description is articulate. And the thing is still wrong.</p>
+        <p>You can catch that in code review, but it is expensive there. You are reading hundreds of lines to reverse-engineer a decision that was stated in one sentence of the plan. Then you ask for changes, and the agent rewrites a lot of code that was never the problem.</p>
+        <p>In the plan, the same mistake is one line. "I will add a new table for this" when you already have one. "I will handle this in the client" when it belongs on the server. "Out of scope: migrations" when the whole point was the migration. Fixing it is a comment and a rewrite of a paragraph. Nothing has been built on top of it yet.</p>
+        <p>So my view is simple. The plan is the cheapest place to fix an agent's mistake, and it is the place we review the least.</p>
+        <h2 class="text-lg font-bold">Why plans go unreviewed</h2>
+        <p>It is not that people do not care. It is that the plan lives in the worst possible place for review.</p>
+        <p>It is a file on the author's machine, inside a session only the author can see. If I want a teammate to look at it, my options are all bad:</p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>Share my screen and scroll through it while they squint.</li>
+          <li>Paste it into a chat or a doc, which freezes a copy while the real file keeps changing.</li>
+          <li>Commit it early so they can review it in git, which turns a ten minute question into a branch and a PR.</li>
+          <li>Skip the second reviewer and review it myself, in the same session that wrote it.</li>
+        </ul>
+        <p>The last one is what usually happens. And reviewing a plan alone, right after asking for it, is the review most likely to agree with the agent. I asked the question, so I read the answer the way I meant the question.</p>
+        <p>Even when I do get someone to read it, their feedback has to get back to the agent somehow. That usually means me copying comments out of a chat thread and pasting them into the prompt, which is exactly the kind of chore that makes people stop doing it.</p>
+        <h2 class="text-lg font-bold">What I wanted instead</h2>
+        <p>I wanted three things, and I wanted all three, because any one of them alone does not change the habit.</p>
+        <p>First, a live link to the file the agent is still writing. Not a snapshot. If the agent edits the plan while someone is reading it, they should see the edit.</p>
+        <p>Second, comments on the actual lines of the rendered document, the way people already comment on docs. Not a chat box about the whole page. A reviewer should be able to highlight "I will add a new table" and say "we already have one, use it."</p>
+        <p>Third, those comments have to reach the agent without me in the middle. If a reviewer writes a comment addressed to the agent, the agent in my session should see it, act on it, and update the file. The link updates too, so the reviewer sees their comment land.</p>
+        <p>That is what <a href="https://gander.md" class="underline">Gander</a> is. You run <code>gander watch plan.md</code>, you get a short link that live-updates on every save, and you send that link to whoever should look. They open it in a browser. They do not need my IDE, my repo, or an account in my agent setup. They comment inline. Comments addressed to <code>@agent</code> come back into the agent session through MCP after a one-time <code>gander mcp install</code>, and <code>gander comments</code> is there as a fallback if you want to pull them by hand.</p>
+        <p>The local file stays the source of truth. Gander does not replace git and it is not a pull request tool. Once the plan is good and the code is written, the normal PR process takes over. Gander is for the loop before that, while the plan is still cheap to change.</p>
+        <h2 class="text-lg font-bold">What changes when the plan gets a reviewer</h2>
+        <p>The biggest change is not speed. It is where disagreements happen.</p>
+        <p>When a teammate reads the plan, the arguments move earlier. "Should this be a new service" gets settled before there is a new service. "Do we need this at all" gets asked before the agent spends its effort building it. The code review that follows gets smaller and more boring, which is what I want from code review.</p>
+        <p>It also changes how I prompt. Knowing someone else will read the plan pushes me to ask the agent for plans that a human can actually review: what it will change, what it will not change, and what it is unsure about. A plan with an explicit "open questions" section is far easier to comment on than a wall of steps.</p>
+        <p>And it keeps the agent honest in a way self-review does not. A reviewer who was not in the conversation does not share my assumptions. They read the plan cold, the same way the code will eventually be read cold by whoever maintains it.</p>
+        <h2 class="text-lg font-bold">The habit, not the tool</h2>
+        <p>If you take one thing from this, it is not "use my product." It is this: before an agent writes a lot of code, get one other person to read the plan, and make it easy for their feedback to reach the agent.</p>
+        <p>You can do that with a screenshare if you have to. I built Gander because I wanted it to take one command and one link, so I would actually do it every time instead of only when the stakes felt high. The stakes are usually higher than they feel at the planning stage. That is the whole point of reviewing there.</p>
+      </article>
+
+      <section class="mt-10 bg-white/90 shadow rounded-lg p-6 md:p-8 max-w-prose mx-auto">
+        <h2 class="text-sm font-bold text-neutral-700 mb-3">More posts</h2>
+        <ul id="more-posts" class="space-y-2 text-sm"></ul>
+      </section>
+
+      <footer class="mt-10 flex items-center justify-center space-x-6 text-xs text-neutral-700">
+        <a href="https://github.com/scott" class="flex items-center space-x-1 hover:underline">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z" />
+          </svg>
+          <span>GitHub</span>
+        </a>
+        <a href="https://linkedin.com/in/optimizeit" class="flex items-center space-x-1 hover:underline">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z" />
+          </svg>
+          <span>LinkedIn</span>
+        </a>
+      </footer>
+    </div>
+
+    <script>
+      (function () {
+        var list = document.getElementById('more-posts');
+        if (!list) return;
+
+        var parts = window.location.pathname.split('/').filter(function (p) { return p.length > 0; });
+        var last = parts[parts.length - 1];
+        var currentSlug = (last === 'index.html' ? parts[parts.length - 2] : last) || '';
+
+        fetch('../posts.json')
+          .then(function (r) { return r.json(); })
+          .then(function (posts) {
+            var others = posts.filter(function (p) { return p.slug !== currentSlug; }).slice(0, 5);
+            if (others.length === 0) {
+              list.parentElement.style.display = 'none';
+              return;
+            }
+            list.innerHTML = others.map(function (post) {
+              var date = new Date(post.date + 'T00:00:00').toLocaleDateString('en-US', {
+                year: 'numeric', month: 'long', day: 'numeric'
+              });
+              return (
+                '<li class="flex items-baseline space-x-2">' +
+                  '<a href="../' + post.slug + '/" class="hover:underline">' + post.title + '</a>' +
+                  '<span class="text-neutral-600">&middot;</span>' +
+                  '<span class="text-neutral-600">' + date + '</span>' +
+                '</li>'
+              );
+            }).join('');
+          })
+          .catch(function () { list.parentElement.style.display = 'none'; });
+      })();
+    </script>
+  </body>
+</html>
