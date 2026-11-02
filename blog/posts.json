@@ -1,5 +1,11 @@
 [
   {
+    "slug": "agents-get-a-narrow-door",
+    "title": "My Agent Can Draft Posts. It Cannot Publish Them.",
+    "date": "2026-11-02",
+    "description": "Why I stopped letting an agent drive a browser to post on X and built a small scheduler where agent tokens can only propose drafts and the software enforces my approval."
+  },
+  {
     "slug": "agile-was-built-for-expensive-code",
     "title": "Agile Was Built for Expensive Code",
     "date": "2026-10-22",
