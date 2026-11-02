@@ -28,6 +28,10 @@
         <p>The interesting part is not the posting. It is what an agent is allowed to do.</p>
         <p>An agent gets a token with two scopes: write drafts and read the post log. That is it. With that token it can create a pending draft, read its own drafts, and delete its own drafts while they are still pending. There is no scope that approves. There is no scope that posts. Not hidden behind a flag, just absent. The API routes for agents never call any of the owner functions.</p>
         <p>Approval now happens in a web UI that needs my password and a passkey. The scheduler only picks up drafts I approved, and only when they are due. If anything edits an approved draft, it drops back to pending and I have to approve it again.</p>
+        <figure class="space-y-2">
+          <img src="xpost-review-queue.webp" alt="The xpost review queue with three pending example drafts for @scottmillerio and @justganderit. Each has Approve, Edit, Reschedule and Reject buttons, and one shows a warning that it is too close to another post." width="1200" height="953" loading="lazy" class="w-full h-auto rounded border border-neutral-200">
+          <figcaption class="text-xs text-neutral-600 text-center">The xpost review queue, from a local demo with sample data.</figcaption>
+        </figure>
         <p>v1 also does less on purpose. It posts originals and threads. No replies to other people, no likes, no follows, no quote posts. Not as hidden features, not as code paths at all. I still do those by hand, from my own phone or laptop, which is how they should look anyway.</p>
         <h2 class="text-lg font-bold">Rules in the system, not in the prompt</h2>
         <p>Building it with agents, the brief mattered more than any single line of code. The constraints I cared about went in at the top and stayed there:</p>
