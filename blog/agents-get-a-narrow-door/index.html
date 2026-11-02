@@ -12,11 +12,11 @@
         <a href="../" class="text-sm hover:underline">&larr; back to blog</a>
         <h1 class="text-2xl font-bold mt-4 mb-1">My Agent Can Draft Posts. It Cannot Publish Them.</h1>
         <div class="text-sm text-neutral-700">November 2, 2026</div>
-        <p class="mt-2 text-neutral-800">Why I stopped letting an agent drive a browser to post on X and built a small scheduler where agent tokens can only propose drafts and I approve every one.</p>
+        <p class="mt-2 text-neutral-800">Why I stopped letting an agent drive a browser to post on X and built a small scheduler where agent tokens can only propose drafts and the software enforces my approval.</p>
       </header>
 
       <article class="bg-white/90 shadow rounded-lg p-6 md:p-8 space-y-4 max-w-prose mx-auto">
-        <p>For a while, one of my agents posted to X for me by driving a browser. It logged in, typed the post, and pressed the button. It worked, in the sense that posts showed up. It also meant that an agent had my full session on a social account, with every button that session can press.</p>
+        <p>For a while, one of my agents posted to X for me by driving a browser. I approved every post first, and then it logged in, typed the post, and pressed the button. It worked, in the sense that posts showed up. It also meant that an agent had my full session on a social account, with every button that session can press.</p>
         <p>Then my account got a notice that its reach might be limited under X's authenticity rules. X reviewed it and lifted the label, and I cannot prove what triggered it. But I had a good guess. A lot of activity, from a browser on a datacenter network, shared between two accounts, does not look like a person. Because it was not one.</p>
         <p>So I stopped asking whether the agent was careful enough, and started asking a better question: why did the agent have a door that big in the first place?</p>
         <h2 class="text-lg font-bold">Browser automation is the widest door there is</h2>
@@ -27,7 +27,7 @@
         <p>I built a small scheduler I call xpost. It runs on a small server I already had, as a single Go binary with SQLite, the same shape as my <a href="/blog/one-binary-dashboard/" class="underline">X stats dashboard</a>. It posts through the official X API on a pay-per-use plan, for my personal account and for <a href="https://gander.md" class="underline">Gander</a>'s account.</p>
         <p>The interesting part is not the posting. It is what an agent is allowed to do.</p>
         <p>An agent gets a token with two scopes: write drafts and read the post log. That is it. With that token it can create a pending draft, read its own drafts, and delete its own drafts while they are still pending. There is no scope that approves. There is no scope that posts. Not hidden behind a flag, just absent. The API routes for agents never call any of the owner functions.</p>
-        <p>Approval happens in a web UI that needs my password and a passkey. The scheduler only picks up drafts I approved, and only when they are due. If anything edits an approved draft, it drops back to pending and I have to approve it again.</p>
+        <p>Approval now happens in a web UI that needs my password and a passkey. The scheduler only picks up drafts I approved, and only when they are due. If anything edits an approved draft, it drops back to pending and I have to approve it again.</p>
         <p>v1 also does less on purpose. It posts originals and threads. No replies to other people, no likes, no follows, no quote posts. Not as hidden features, not as code paths at all. I still do those by hand, from my own phone or laptop, which is how they should look anyway.</p>
         <h2 class="text-lg font-bold">Rules in the system, not in the prompt</h2>
         <p>Building it with agents, the brief mattered more than any single line of code. The constraints I cared about went in at the top and stayed there:</p>
@@ -41,7 +41,7 @@
         <p>That last one is my favorite. Pay-per-use APIs are great until something loops. So the default is closed: the scheduler checks that a cap exists, that it knows the rates, and that the month is under the cap before it posts anything. Plain posts are cheap. Posts with links cost noticeably more, which turned out to be a useful nudge to only link when the link earns it.</p>
         <p>None of these rules depend on the agent behaving. The agent can be wrong, confused, or handed a weird instruction from some web page, and the worst it can do is fill my queue with drafts I reject.</p>
         <h2 class="text-lg font-bold">My job got smaller and better</h2>
-        <p>Before, my role was supervisor of an agent that could act. I was reading logs after the fact, checking whether something went out that should not have.</p>
+        <p>Before, I approved every post too, but nothing in the system enforced it. The agent still held a session that could press any button, so I was also reading logs after the fact, checking that only what I approved went out.</p>
         <p>Now my role is editor. The agent writes the week's posts and queues them with proposed times. I open the queue, fix a word, move one to the afternoon, reject one that is off, and approve the rest. It takes a few minutes. Nothing reaches the public that I did not look at first, and that is enforced by the software, not by my attention span.</p>
         <p>The agent's job also got clearer. It no longer has to be careful about clicking the right button. It just has to write good drafts. That is a better fit for what agents are actually good at.</p>
         <h2 class="text-lg font-bold">The general lesson</h2>
