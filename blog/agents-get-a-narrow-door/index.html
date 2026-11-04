@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
-    <meta name="xpost:content" content="sha256:a9349679e545a40aeab148f0c8cb858e851863319cd706ba3d8091e208781c4c">
+    <meta name="xpost:content" content="sha256:14ae44034b463b2d212b76db3a764297f2061a214c1f0c11cc1cb862815f3c6e">
     <meta name="xpost:post" content="50">
   </head>
 
@@ -30,8 +30,6 @@
 <p>The interesting part is not the posting. It is what an agent is allowed to do.</p>
 <p>An agent gets a token with two scopes: write drafts and read the post log. That is it. With that token it can create a pending draft, read its own drafts, and delete its own drafts while they are still pending. There is no scope that approves. There is no scope that posts. Not hidden behind a flag, just absent. The API routes for agents never call any of the owner functions.</p>
 <p>Approval now happens in a web UI that needs my password and a passkey. The scheduler only picks up drafts I approved, and only when they are due. If anything edits an approved draft, it drops back to pending and I have to approve it again.</p>
-<p></p>
-<p><em>The xpost review queue, from a local demo with sample data.</em></p>
 <p>v1 also does less on purpose. It posts originals and threads. No replies to other people, no likes, no follows, no quote posts. Not as hidden features, not as code paths at all. I still do those by hand, from my own phone or laptop, which is how they should look anyway.</p>
 <h2>Rules in the system, not in the prompt</h2>
 <p>Building it with agents, the brief mattered more than any single line of code. The constraints I cared about went in at the top and stayed there:</p>
