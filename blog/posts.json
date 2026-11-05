@@ -1,5 +1,11 @@
 [
   {
+    "slug": "creating-an-agent-like-an-app",
+    "title": "I Wanted Creating an Agent to Feel Like Creating an App",
+    "date": "2026-11-05",
+    "description": "Getting an agent to answer in a chat is the easy part. Shipping one that is reachable, versioned, and safe with credentials is the gap I built Cast Agent to close."
+  },
+  {
     "slug": "agents-get-a-narrow-door",
     "title": "My Agent Can Draft Posts. It Cannot Publish Them.",
     "date": "2026-11-04",
