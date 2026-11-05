@@ -1,0 +1,104 @@
+<html lang="en">
+  <head>
+    <title>I Wanted Creating an Agent to Feel Like Creating an App - Scott Miller</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+
+  <body class="font-mono" style="background-image:url('../../topo.png');">
+    <div class="max-w-3xl mx-auto px-4 py-10 md:py-16">
+      <header class="mb-8">
+        <a href="../" class="text-sm hover:underline">&larr; back to blog</a>
+        <h1 class="text-2xl font-bold mt-4 mb-1">I Wanted Creating an Agent to Feel Like Creating an App</h1>
+        <div class="text-sm text-neutral-700">November 5, 2026</div>
+        <p class="mt-2 text-neutral-800">Getting an agent to answer in a chat is the easy part. Shipping one that is reachable, versioned, and safe with credentials is the gap I built Cast Agent to close.</p>
+      </header>
+
+      <article class="bg-white/90 shadow rounded-lg p-6 md:p-8 space-y-4 max-w-prose mx-auto">
+<p>Getting an agent to answer in a chat session is not that hard anymore. You pick a model, write some instructions, wire up a tool or two, and it works. On your laptop. In that terminal. Until you close the window.</p>
+<p>The gap I kept hitting was everything after that. I wanted a real agent: something reachable on a URL, with credentials handled carefully, a place to host it, and a path to change it later without rebuilding from scratch. That part still felt like stitching together half a dozen one-off scripts every time.</p>
+<p>So I built <a href="https://castagent.dev" rel="nofollow noreferrer noopener" target="_blank">Cast Agent</a>. It is a CLI and terminal UI for creating, testing, and deploying AI agents. The job I wanted it to do, in one line: describe what the agent should do, get a scaffold, deploy it with one command to a provider I already use.</p>
+<h2>The painful middle</h2>
+<p>By hand, the middle of agent work was always the same list.</p>
+<p>First you invent a project shape. Instructions in one file, tools in another, config somewhere else, a runtime that speaks whatever protocol you picked that week. Then you figure out secrets. Where do the API keys live so they are not printed into a YAML file you will accidentally commit? Then you pick a host. Docker on this machine is fine for a demo. For something other people can hit, you want Railway, Fly.io, a DigitalOcean droplet, or something else you already have credentials for. Then you change the agent, and you have to remember how you deployed it last time, and whether the old version is still running somewhere.</p>
+<p>None of that is interesting AI work. It is the same glue every app needs, except the agent ecosystem still treats it as optional homework.</p>
+<p>I got tired of doing the homework twice for every agent I wanted to keep around.</p>
+<h2>Describe, scaffold, deploy</h2>
+<p>Cast Agent starts from a description. You say what the agent should do, and the interactive builder scaffolds it: instructions, tools, and configuration, ready to develop. The runtime is Python-based and speaks the A2A protocol, so the thing you end up with is an A2A server, not a one-off chat script.</p>
+<p>Deploy is one command against a provider you choose. Local with no container, Docker on this machine, Railway, Fly.io, a DigitalOcean droplet, DigitalOcean MicroVM, or Sprites. Cast does not run its own microVM fleet. The providers do. Cast just knows how to hand your agent to them.</p>
+<p>That split matters to me. I did not want to become an infra company in order to make agent creation feel less painful. I wanted the create path to feel closer to <code>create-app</code>, and the host to be whoever I already trust for that kind of compute.</p>
+<h2>Why the provider list is the point</h2>
+<p>Different agents want different shapes of machine.</p>
+<p>Sometimes local is enough. You are iterating, you do not want a network hop, and Docker is optional. Sometimes you want a managed container with an automatic deploy story, which is why Railway and Fly.io are there. Sometimes you already live on DigitalOcean and a droplet with Docker is the obvious home.</p>
+<p>And sometimes you want a Firecracker microVM that pauses when idle and resumes on the next request. DigitalOcean MicroVM does that in MKC1. Sprites gives you persistent Firecracker VMs on Fly.io. Those pause-and-resume properties belong to the provider. Cast does not invent them. It just makes them a <code>--provider</code> flag instead of a weekend of reading docs.</p>
+<p>I like that framing because it keeps Cast honest. The hard product is the create and change loop. The hard infra is already out there.</p>
+<h2>The boring pieces that make shipping real</h2>
+<p>A deploy button is not enough. What made agents feel unfinished for me was everything around the first ship.</p>
+<p>Agent versioning is one of those pieces. Cast keeps automatic snapshots, lets you cut intentional semantic releases, shows diffs, and can roll back to an earlier state. That is the same muscle as app deploys. If changing an agent&#39;s instructions feels permanent and scary, you will not change them. If rollback is one step, you will ship the small edit.</p>
+<p>Credentials are another. There is an OAuth credential vault and secure token storage so secrets are not sitting in plain config. I have burned myself enough times copying keys into files that get committed, logged, or pasted into a chat. The vault is not glamorous. It is the difference between an agent you are willing to leave running and one you treat like a science fair project.</p>
+<p>Deployment tracking sits next to that. You should be able to see what went where, and when. GitHub and git ops for agents are there too, so the agent can live in a repo with the usual init, commit, push, pull, and branch flow. Persistent agent memory covers the other half of &#34;this should feel like an app&#34;: context that survives across sessions instead of resetting every time you start the process.</p>
+<p>None of that is the demo that gets screenshots. It is the reason I trust the tool with agents I actually want to keep.</p>
+<h2>Closer to creating an app</h2>
+<p>I did not set out to invent a new kind of agent. I set out to shrink the distance between &#34;this works in a session&#34; and &#34;this is a thing I can point at, change, and redeploy.&#34;</p>
+<p>That distance is still where a lot of agent projects die. The model call is fine. The tools are fine. The week after, when you want to move it off your laptop, rotate a key, or undo a bad instruction change, the project turns into archaeology.</p>
+<p>Cast Agent is my answer to that. Describe the agent. Get a scaffold. Deploy it to a provider you already use. Keep versions, credentials, and deploys in the open where you can see them.</p>
+<p>Creating an agent should feel closer to creating an app. That is the bar I am building toward, one boring piece at a time.</p>
+      </article>
+
+      <section class="mt-10 bg-white/90 shadow rounded-lg p-6 md:p-8 max-w-prose mx-auto">
+        <h2 class="text-sm font-bold text-neutral-700 mb-3">More posts</h2>
+        <ul id="more-posts" class="space-y-2 text-sm"></ul>
+      </section>
+
+      <footer class="mt-10 flex items-center justify-center space-x-6 text-xs text-neutral-700">
+        <a href="https://github.com/scott" class="flex items-center space-x-1 hover:underline">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z" />
+          </svg>
+          <span>GitHub</span>
+        </a>
+        <a href="https://linkedin.com/in/optimizeit" class="flex items-center space-x-1 hover:underline">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z" />
+          </svg>
+          <span>LinkedIn</span>
+        </a>
+      </footer>
+    </div>
+
+    <script>
+      (function () {
+        var list = document.getElementById('more-posts');
+        if (!list) return;
+
+        var parts = window.location.pathname.split('/').filter(function (p) { return p.length > 0; });
+        var last = parts[parts.length - 1];
+        var currentSlug = (last === 'index.html' ? parts[parts.length - 2] : last) || '';
+
+        fetch('../posts.json')
+          .then(function (r) { return r.json(); })
+          .then(function (posts) {
+            var others = posts.filter(function (p) { return p.slug !== currentSlug; }).slice(0, 5);
+            if (others.length === 0) {
+              list.parentElement.style.display = 'none';
+              return;
+            }
+            list.innerHTML = others.map(function (post) {
+              var date = new Date(post.date + 'T00:00:00').toLocaleDateString('en-US', {
+                year: 'numeric', month: 'long', day: 'numeric'
+              });
+              return (
+                '<li class="flex items-baseline space-x-2">' +
+                  '<a href="../' + post.slug + '/" class="hover:underline">' + post.title + '</a>' +
+                  '<span class="text-neutral-600">&middot;</span>' +
+                  '<span class="text-neutral-600">' + date + '</span>' +
+                '</li>'
+              );
+            }).join('');
+          })
+          .catch(function () { list.parentElement.style.display = 'none'; });
+      })();
+    </script>
+  </body>
+</html>
