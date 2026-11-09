@@ -1,0 +1,105 @@
+<html lang="en">
+  <head>
+    <title>My New Site Gets About 18 Visitors a Day, and Most of Them Aren&#39;t People - Scott Miller</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+
+  <body class="font-mono" style="background-image:url('../../topo.png');">
+    <div class="max-w-3xl mx-auto px-4 py-10 md:py-16">
+      <header class="mb-8">
+        <a href="../" class="text-sm hover:underline">&larr; back to blog</a>
+        <h1 class="text-2xl font-bold mt-4 mb-1">My New Site Gets About 18 Visitors a Day, and Most of Them Aren&#39;t People</h1>
+        <div class="text-sm text-neutral-700">November 9, 2026</div>
+        <p class="mt-2 text-neutral-800">Reading a few days of real analytics for a brand new product site taught me to treat a visitor count as a claim I have to check.</p>
+      </header>
+
+      <article class="bg-white/90 shadow rounded-lg p-6 md:p-8 space-y-4 max-w-prose mx-auto">
+<p>I run analytics on Gander, my side project, and every morning an agent pulls a snapshot of the previous day for me. This week I finally read the numbers closely instead of skimming the headline, and I learned something I should have known already: when your site is new, the visitor count is mostly a measurement of robots.</p>
+<h2>The numbers</h2>
+<p>Here are the last three daily snapshots, straight from the dashboard.</p>
+<ul>
+<li>Friday: 7 visitors, 7 pageviews, all of it Direct traffic, no referrers.</li>
+<li>Saturday: 4 visitors, 4 pageviews, all Direct.</li>
+<li>Sunday: 18 visitors, 19 pageviews, a 94 percent bounce rate, and an average visit duration of zero seconds.</li>
+</ul>
+<p>If I only looked at Sunday, I could tell myself a story. Traffic more than quadrupled in a day. Something is working. I could even post about it.</p>
+<p>Then I looked at where the visits came from. Fourteen of Sunday&#39;s 18 sessions came from Santa Clara, plus a couple from China and Singapore, and they all looked automated: one page, zero seconds, no referrer. Those aren&#39;t people finding my product. They are crawlers, scanners, and probably a few monitoring services that found a new domain.</p>
+<h2>What was left</h2>
+<p>Once I set the automated looking sessions aside, Sunday had about two real candidates. One was a single referral from t.co, which is X&#39;s link shortener. That is the one click I can tie to a post I made. The other was a visit from Frankfurt on an Android webview, reading a blog post about decision logs, which may or may not be the same person who clicked from X.</p>
+<p>I say &#34;may or may not&#34; on purpose. I can&#39;t prove either of them is human. I&#39;m making a judgment from the city, the device, the page, and the timing. That is useful, but it is a guess, and I try to label it as one.</p>
+<p>Saturday was similar. Of four visits, maybe one was a real organic reader, from Chile, on a use case page. The rest looked like the same overnight bot pattern, plus me checking my own blog from Salt Lake City.</p>
+<h2>Why this matters more than it sounds</h2>
+<p>I build with agents, and agents are very good at producing confident summaries. If I had asked one to &#34;report traffic&#34; with no guardrails, it would have happily told me Sunday was my best day ever. The number was true. The conclusion would have been wrong.</p>
+<p>So the instruction I gave the snapshot agent matters more than the query it runs. Mine now says roughly this: report the raw counts, then separately list sessions that look like real people and say how confident you are. If you can&#39;t tell, say you can&#39;t tell. Never round a guess up into a fact.</p>
+<p>That one change turned the report from a vanity feed into something I can use. A line like &#34;possible organic, low confidence, one page, zero seconds&#34; is honest, and it keeps me from building a plan on a bot.</p>
+<h2>What I&#39;m doing differently</h2>
+<p>A few small habits came out of this.</p>
+<p>First, I stopped quoting totals. When I talk about the site, I talk about the handful of sessions I believe are real, and I say how many I&#39;m unsure about.</p>
+<p>Second, I track referrers more than visits. A referrer is a trail. t.co means a post worked, at least once. Direct with zero seconds means almost nothing.</p>
+<p>Third, I treat a spike as a question. Before celebrating, I check the city, the duration, and whether the pages visited are ones a person would actually open.</p>
+<p>Fourth, I keep a plain text log of each day&#39;s snapshot, so I can see the baseline. A bot pattern that shows up every night is background noise. A day that breaks the pattern is worth a closer look.</p>
+<h2>The bigger lesson for early products</h2>
+<p>Early on, the temptation is to find any signal and lean on it. Traffic charts, stars, follower counts, and signups all give you a number that wants to be good news. With a tiny sample, one bot or one friend can swing the whole picture.</p>
+<p>The fix isn&#39;t fancier tooling. It&#39;s being strict about what you&#39;re willing to claim. I&#39;d rather say &#34;I have maybe two real readers a day, and I know roughly where one of them came from&#34; than say &#34;traffic is up 350 percent.&#34; The first sentence is smaller, but I can build on it. The second one falls apart the moment someone asks how I know.</p>
+<p>If you are building a new product and your analytics look better than they should, look at the sessions one by one. It takes ten minutes, and it is a humbling and useful ten minutes. Mine told me exactly where I stand, which is the very beginning, with a few real readers and a lot of robots saying hello.</p>
+<p>These are my own views and numbers from my own project, not anyone&#39;s employer.</p>
+      </article>
+
+      <section class="mt-10 bg-white/90 shadow rounded-lg p-6 md:p-8 max-w-prose mx-auto">
+        <h2 class="text-sm font-bold text-neutral-700 mb-3">More posts</h2>
+        <ul id="more-posts" class="space-y-2 text-sm"></ul>
+      </section>
+
+      <footer class="mt-10 flex items-center justify-center space-x-6 text-xs text-neutral-700">
+        <a href="https://github.com/scott" class="flex items-center space-x-1 hover:underline">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z" />
+          </svg>
+          <span>GitHub</span>
+        </a>
+        <a href="https://linkedin.com/in/optimizeit" class="flex items-center space-x-1 hover:underline">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z" />
+          </svg>
+          <span>LinkedIn</span>
+        </a>
+      </footer>
+    </div>
+
+    <script>
+      (function () {
+        var list = document.getElementById('more-posts');
+        if (!list) return;
+
+        var parts = window.location.pathname.split('/').filter(function (p) { return p.length > 0; });
+        var last = parts[parts.length - 1];
+        var currentSlug = (last === 'index.html' ? parts[parts.length - 2] : last) || '';
+
+        fetch('../posts.json')
+          .then(function (r) { return r.json(); })
+          .then(function (posts) {
+            var others = posts.filter(function (p) { return p.slug !== currentSlug; }).slice(0, 5);
+            if (others.length === 0) {
+              list.parentElement.style.display = 'none';
+              return;
+            }
+            list.innerHTML = others.map(function (post) {
+              var date = new Date(post.date + 'T00:00:00').toLocaleDateString('en-US', {
+                year: 'numeric', month: 'long', day: 'numeric'
+              });
+              return (
+                '<li class="flex items-baseline space-x-2">' +
+                  '<a href="../' + post.slug + '/" class="hover:underline">' + post.title + '</a>' +
+                  '<span class="text-neutral-600">&middot;</span>' +
+                  '<span class="text-neutral-600">' + date + '</span>' +
+                '</li>'
+              );
+            }).join('');
+          })
+          .catch(function () { list.parentElement.style.display = 'none'; });
+      })();
+    </script>
+  </body>
+</html>
