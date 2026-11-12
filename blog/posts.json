@@ -1,5 +1,11 @@
 [
   {
+    "slug": "pick-the-model-per-step",
+    "title": "I Stopped Picking a Model. I Pick One Per Step.",
+    "date": "2026-11-12",
+    "description": "Most agent work is a lot of small, boring calls and a few hard ones, so I give the plan and the hard calls to a strong model, the rest to a cheaper one, and only escalate on evidence."
+  },
+  {
     "slug": "agents-get-a-narrow-door",
     "title": "My Agent Can Draft Posts. It Cannot Publish Them.",
     "date": "2026-11-04",
