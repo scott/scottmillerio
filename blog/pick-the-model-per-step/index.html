@@ -1,0 +1,106 @@
+<html lang="en">
+  <head>
+    <title>I Stopped Picking a Model. I Pick One Per Step. - Scott Miller</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+
+  <body class="font-mono" style="background-image:url('../../topo.png');">
+    <div class="max-w-3xl mx-auto px-4 py-10 md:py-16">
+      <header class="mb-8">
+        <a href="../" class="text-sm hover:underline">&larr; back to blog</a>
+        <h1 class="text-2xl font-bold mt-4 mb-1">I Stopped Picking a Model. I Pick One Per Step.</h1>
+        <div class="text-sm text-neutral-700">November 12, 2026</div>
+        <p class="mt-2 text-neutral-800">Most agent work is a lot of small, boring calls and a few hard ones, so I give the plan and the hard calls to a strong model, the rest to a cheaper one, and only escalate on evidence.</p>
+      </header>
+
+      <article class="bg-white/90 shadow rounded-lg p-6 md:p-8 space-y-4 max-w-prose mx-auto">
+<p>For a long time my model choice was a project setting. I picked the best model I could afford, pointed the agent at it, and every call went to the same place. Planning, tool calls, reformatting a JSON blob, deciding whether a test passed. Same model, same price, same latency.</p>
+<p>That made sense when I was running one agent in one terminal. It makes a lot less sense now that I run several agents for my side projects, every day, on schedules. Once you look at what those agents actually spend their calls on, the &#34;one model per project&#34; habit starts to look like paying a senior engineer to rename files.</p>
+<h2>Most agent calls are not hard</h2>
+<p>When I read through agent traces, the pattern is the same almost every time. There are a few calls that matter a lot: understanding the task, writing the plan, making the judgment call when something unexpected happens, and reviewing the result. Then there are many calls that are mechanical: read this file, extract these fields, summarize this page, check whether this output matches a format, decide yes or no.</p>
+<p>The hard calls are where a strong model earns its price. The mechanical calls mostly need to be fast, cheap, and reliable at following instructions and calling tools. Paying frontier prices for a yes or no answer is not quality. It is waste with a nicer label.</p>
+<p>So I stopped asking &#34;which model is best?&#34; and started asking &#34;which model is good enough for this step?&#34;</p>
+<h2>How I split it</h2>
+<p>My default now looks like this.</p>
+<p><strong>A strong model for the plan and the hard calls.</strong> The agent that decides what to do, how to break up the work, and what &#34;done&#34; means gets the best model I have. Same for review. If a step is where a wrong call compounds into everything after it, that step gets the expensive seat.</p>
+<p><strong>A cheaper, faster model for the workers.</strong> The many small calls that execute a plan, fetch and shape data, or draft something that will be checked anyway go to a smaller model. These calls are the bulk of the volume, so this is where the bill actually moves.</p>
+<p><strong>A judge for the yes or no questions.</strong> A lot of agent loops are quietly full of decisions: did this pass, which tool fits, is this output in the right shape, should I retry. Those are classification problems, not writing problems. A model that picks one answer from a fixed set is a better fit than a model that wants to write you an essay about it.</p>
+<p>None of this is exotic. It is the same thing any team does with people. You do not send every question to the most senior person in the room. You send them the questions only they can answer.</p>
+<h2>The rule that keeps it honest: escalate on evidence</h2>
+<p>The first time I split work across model tiers, I made the obvious mistake. I let each step decide for itself whether it was hard enough to need the bigger model.</p>
+<p>Every step decided it was hard.</p>
+<p>That is not the model being sneaky. If you ask &#34;is this task difficult?&#34; and give an easy way out, you get a cautious answer. The result was that the cheap tier barely got used and the bill drifted right back up.</p>
+<p>What fixed it was an escalation rule based on evidence, not on how the task feels. A step starts on the cheaper model. It only gets bumped to the stronger one after something concrete goes wrong: a test fails, a check rejects the output, or the same step misses twice. If the cheap model gets it right, which it usually does for this kind of work, nobody needs to know the strong model exists.</p>
+<p>This also gives me a useful signal. If a particular step escalates all the time, that step was never mechanical. I move it up a tier on purpose instead of paying for retries forever.</p>
+<h2>More effort is not the same as a better model</h2>
+<p>Another trap I fell into was cranking the reasoning effort on a small model and expecting big-model results. In my experience it mostly buys longer chains of thought and more retries, not better judgment. If a step needs judgment, give it a model with judgment. If it does not, give it a small model at normal effort and let it be fast.</p>
+<p>The reverse is also true. For most of my day-to-day agent work, a strong general model at medium or high effort is plenty. I do not need the maximum setting for every call, and the &#34;fast&#34; variants are not always the bargain they look like when they get the hard calls wrong and you pay for the cleanup.</p>
+<h2>What this changes about building agents</h2>
+<p>Thinking per step changes how I structure agents in the first place.</p>
+<p>It pushes me to make steps explicit. If the plan, the work, and the check are all one giant prompt, there is nothing to route. Once they are separate steps, each one can get the right model, the right tools, and the right budget.</p>
+<p>It makes cost something I can reason about. Instead of &#34;this agent is expensive,&#34; I can see which step is expensive and why. Usually it is one or two steps, and usually they are the ones I would have guessed.</p>
+<p>And it makes swapping models less scary. New models show up constantly. When a new fast, cheap model lands, I do not have to migrate a whole agent and hope. I try it on the worker seat, run the same checks, and keep it if it holds up. The strong seat can stay where it is until something clearly better shows up there too.</p>
+<p>This is also part of why I care about tooling that treats an agent as a set of parts you can change, not a single prompt glued to a single model. It is a big part of what I am building toward with <a href="https://castagent.dev" rel="nofollow noreferrer noopener" target="_blank">Cast Agent</a>: making it easy to create and deploy an agent, then change pieces of it later without starting over.</p>
+<h2>The short version</h2>
+<p>Do not pick a model for the project. Pick one for each step.</p>
+<p>Give the plan and the hard calls to a model that can think. Give the volume to a model that is fast and cheap. Give the yes or no questions to something built to decide. And only escalate when the evidence says so, because if you let every step decide it is special, every step will.</p>
+      </article>
+
+      <section class="mt-10 bg-white/90 shadow rounded-lg p-6 md:p-8 max-w-prose mx-auto">
+        <h2 class="text-sm font-bold text-neutral-700 mb-3">More posts</h2>
+        <ul id="more-posts" class="space-y-2 text-sm"></ul>
+      </section>
+
+      <footer class="mt-10 flex items-center justify-center space-x-6 text-xs text-neutral-700">
+        <a href="https://github.com/scott" class="flex items-center space-x-1 hover:underline">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z" />
+          </svg>
+          <span>GitHub</span>
+        </a>
+        <a href="https://linkedin.com/in/optimizeit" class="flex items-center space-x-1 hover:underline">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z" />
+          </svg>
+          <span>LinkedIn</span>
+        </a>
+      </footer>
+    </div>
+
+    <script>
+      (function () {
+        var list = document.getElementById('more-posts');
+        if (!list) return;
+
+        var parts = window.location.pathname.split('/').filter(function (p) { return p.length > 0; });
+        var last = parts[parts.length - 1];
+        var currentSlug = (last === 'index.html' ? parts[parts.length - 2] : last) || '';
+
+        fetch('../posts.json')
+          .then(function (r) { return r.json(); })
+          .then(function (posts) {
+            var others = posts.filter(function (p) { return p.slug !== currentSlug; }).slice(0, 5);
+            if (others.length === 0) {
+              list.parentElement.style.display = 'none';
+              return;
+            }
+            list.innerHTML = others.map(function (post) {
+              var date = new Date(post.date + 'T00:00:00').toLocaleDateString('en-US', {
+                year: 'numeric', month: 'long', day: 'numeric'
+              });
+              return (
+                '<li class="flex items-baseline space-x-2">' +
+                  '<a href="../' + post.slug + '/" class="hover:underline">' + post.title + '</a>' +
+                  '<span class="text-neutral-600">&middot;</span>' +
+                  '<span class="text-neutral-600">' + date + '</span>' +
+                '</li>'
+              );
+            }).join('');
+          })
+          .catch(function () { list.parentElement.style.display = 'none'; });
+      })();
+    </script>
+  </body>
+</html>
