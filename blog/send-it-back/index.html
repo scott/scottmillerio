@@ -1,0 +1,103 @@
+<html lang="en">
+  <head>
+    <title>The Most Useful Button I Gave My Agent&#39;s Drafts Is &#34;Send It Back&#34; - Scott Miller</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+
+  <body class="font-mono" style="background-image:url('../../topo.png');">
+    <div class="max-w-3xl mx-auto px-4 py-10 md:py-16">
+      <header class="mb-8">
+        <a href="../" class="text-sm hover:underline">&larr; back to blog</a>
+        <h1 class="text-2xl font-bold mt-4 mb-1">The Most Useful Button I Gave My Agent&#39;s Drafts Is &#34;Send It Back&#34;</h1>
+        <div class="text-sm text-neutral-700">November 16, 2026</div>
+        <p class="mt-2 text-neutral-800">Approve and reject were too blunt for reviewing an agent&#39;s drafts, so I added a third option that returns the draft with a note, and the details of that loop turned out to matter more than the button.</p>
+      </header>
+
+      <article class="bg-white/90 shadow rounded-lg p-6 md:p-8 space-y-4 max-w-prose mx-auto">
+<p>I have an agent that writes drafts of my posts on X. It does not post them. It sends them to xpost, a small scheduler I run at post.scottmiller.io, and every draft waits there until I approve it. The agent&#39;s token can propose drafts, and nothing it holds can approve or publish.</p>
+<p>That part worked. What did not work at first was the review itself.</p>
+<h2>Approve or reject is a bad interface</h2>
+<p>When I opened the queue, each draft gave me two choices. Approve it and it goes out at its proposed time. Reject it and it is gone.</p>
+<p>Most drafts were not either of those. They were close. The idea was right and one line was off. The tone was a little too much like a press release. A point was buried at the end that should have been first. A link was in a post that did not need one, and on the X API a post with a URL costs a lot more than a plain one, so that matters to me.</p>
+<p>With only two buttons I had two bad options. I could approve something I did not quite like, or I could reject it and lose a draft that was most of the way there. The third option was to open the editor and fix it myself, which works, but then I am the writer again and the agent learns nothing from the exchange.</p>
+<p>So I added a third button: send it back, with an optional note.</p>
+<h2>What &#34;send it back&#34; actually does</h2>
+<p>When I send a draft back, xpost calls a webhook that belongs to the agent. The payload carries the draft&#39;s current text, my note, an expiry time, and a callback the agent uses to answer. The agent rewrites the draft and posts the new text to that callback. The revised draft shows up in my queue again, still pending, still needing my approval.</p>
+<p>The button is simple. The rules around it are where most of the thinking went, and I think they apply to any loop where a person reviews an agent&#39;s work.</p>
+<h2>The rules that made it trustworthy</h2>
+<p><strong>The request is signed and short lived.</strong> Every webhook call carries a timestamp and an HMAC signature over the timestamp and the raw body. The receiver is told to check the signature with a constant time compare and to refuse anything more than five minutes old. A rewrite request is an instruction to an agent, and I do not want anyone else able to forge one.</p>
+<p><strong>xpost will not call just any address.</strong> The webhook has to be https on a public address. xpost refuses private ranges, loopback, link local and other reserved addresses when it connects. A feature that makes my server send requests to a URL I typed in is exactly the kind of thing that turns into a hole later, so I closed that off up front.</p>
+<p><strong>Answer fast, work later.</strong> The receiver should return a 2xx right away and do the rewrite afterward. Rewriting takes a model call, and a webhook sender that sits waiting on a model is a timeout waiting to happen.</p>
+<p><strong>There is a deadline.</strong> The agent has 60 minutes to reply. After that the request expires. I would rather have a stale request die quietly than get a rewrite hours later for a post whose moment has passed.</p>
+<p><strong>A 409 means stop.</strong> If I rejected the draft in the meantime, cancelled the request, sent a newer one, or the request already got an answer, the callback returns 409. The agent is told plainly not to retry a 409. This is the rule I care about most. An agent that keeps retrying after I changed my mind is worse than one that never answered.</p>
+<p><strong>&#34;No changes&#34; is a valid answer.</strong> The agent can send the same text back. xpost shows me &#34;No changes&#34; instead of treating it as an error. Sometimes my note is a question, or the draft really is fine, and I want the agent to be able to say so instead of inventing an edit to look busy.</p>
+<p><strong>The scope stays narrow.</strong> Revising needs its own scope on the token. The agent can only revise its own drafts, and only while they are pending. It can change the text and the number of parts in a thread, but it cannot change the images. And after a rewrite, the draft is still just a draft. Sending something back never moves it closer to publishing without me.</p>
+<h2>Why this beats editing it myself</h2>
+<p>The obvious objection is that it would be faster to fix the line myself. For a single draft, often it is.</p>
+<p>But the note is the useful part. &#34;Too salesy, lead with the problem&#34; is a sentence I can write in five seconds, and it says something about how I want to sound that a silent edit does not. The agent gets the note next to the text it wrote, which is the right context for the fix. When I edit a draft myself, the agent only ever sees the final version, if it sees anything at all.</p>
+<p>It also keeps the roles clean. The agent writes. I review. If I find myself rewriting a lot of drafts by hand, that is a signal the instructions are wrong, and I would rather find that out from my notes than bury it in my own edits.</p>
+<h2>What I would tell someone building a review loop for agents</h2>
+<p>Do not stop at approve and reject. Most agent output lands in the middle, and you need a cheap way to say &#34;close, fix this.&#34;</p>
+<p>Put the rules in the system. Signatures, expiry, a deadline, a clear &#34;do not retry&#34; signal, and a narrow scope are all things the software enforces. None of them depend on the agent behaving well.</p>
+<p>Let the agent say nothing changed. A loop that forces an edit on every round trains an agent to make edits, not to make things better.</p>
+<p>And keep the person at the end. A rewrite is just another draft. The approve button still belongs to me, and that is the one rule I do not plan to change.</p>
+</article>
+
+      <section class="mt-10 bg-white/90 shadow rounded-lg p-6 md:p-8 max-w-prose mx-auto">
+        <h2 class="text-sm font-bold text-neutral-700 mb-3">More posts</h2>
+        <ul id="more-posts" class="space-y-2 text-sm"></ul>
+      </section>
+
+      <footer class="mt-10 flex items-center justify-center space-x-6 text-xs text-neutral-700">
+        <a href="https://github.com/scott" class="flex items-center space-x-1 hover:underline">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z" />
+          </svg>
+          <span>GitHub</span>
+        </a>
+        <a href="https://linkedin.com/in/optimizeit" class="flex items-center space-x-1 hover:underline">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z" />
+          </svg>
+          <span>LinkedIn</span>
+        </a>
+      </footer>
+    </div>
+
+    <script>
+      (function () {
+        var list = document.getElementById('more-posts');
+        if (!list) return;
+
+        var parts = window.location.pathname.split('/').filter(function (p) { return p.length > 0; });
+        var last = parts[parts.length - 1];
+        var currentSlug = (last === 'index.html' ? parts[parts.length - 2] : last) || '';
+
+        fetch('../posts.json')
+          .then(function (r) { return r.json(); })
+          .then(function (posts) {
+            var others = posts.filter(function (p) { return p.slug !== currentSlug; }).slice(0, 5);
+            if (others.length === 0) {
+              list.parentElement.style.display = 'none';
+              return;
+            }
+            list.innerHTML = others.map(function (post) {
+              var date = new Date(post.date + 'T00:00:00').toLocaleDateString('en-US', {
+                year: 'numeric', month: 'long', day: 'numeric'
+              });
+              return (
+                '<li class="flex items-baseline space-x-2">' +
+                  '<a href="../' + post.slug + '/" class="hover:underline">' + post.title + '</a>' +
+                  '<span class="text-neutral-600">&middot;</span>' +
+                  '<span class="text-neutral-600">' + date + '</span>' +
+                '</li>'
+              );
+            }).join('');
+          })
+          .catch(function () { list.parentElement.style.display = 'none'; });
+      })();
+    </script>
+  </body>
+</html>
