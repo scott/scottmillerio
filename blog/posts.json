@@ -1,5 +1,11 @@
 [
   {
+    "slug": "agent-budget-fails-closed",
+    "title": "I Gave My Agent's Posting a $20 Monthly Budget, and the Scheduler Fails Closed",
+    "date": "2026-11-19",
+    "description": "Putting a hard dollar cap and known per-post prices into the tool my agent posts through changed how it writes, and the most important rule was that missing numbers mean nothing posts."
+  },
+  {
     "slug": "agents-get-a-narrow-door",
     "title": "My Agent Can Draft Posts. It Cannot Publish Them.",
     "date": "2026-11-04",
