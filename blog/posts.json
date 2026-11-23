@@ -1,5 +1,11 @@
 [
   {
+    "slug": "install-guide-for-agents",
+    "title": "I Wrote the Install Guide for My Dashboard So an Agent Could Follow It",
+    "date": "2026-11-23",
+    "description": "xstats ships with a small set of agent skills for setup, sync, updates and the weekly summary, and writing them taught me that docs for an agent are mostly about what it must never do."
+  },
+  {
     "slug": "agents-get-a-narrow-door",
     "title": "My Agent Can Draft Posts. It Cannot Publish Them.",
     "date": "2026-11-04",
