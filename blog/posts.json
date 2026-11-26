@@ -1,5 +1,11 @@
 [
   {
+    "slug": "agents-borrow-permissions",
+    "title": "In My Family App, Every Agent Borrows One Person's Permissions",
+    "date": "2026-11-26",
+    "description": "When I built Kin, a small private app for my household's people, dates and providers, the most important design rule was that an agent never gets its own access, only a slice of the person who owns it."
+  },
+  {
     "slug": "agents-get-a-narrow-door",
     "title": "My Agent Can Draft Posts. It Cannot Publish Them.",
     "date": "2026-11-04",
