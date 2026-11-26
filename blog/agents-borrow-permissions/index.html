@@ -1,0 +1,108 @@
+<html lang="en">
+  <head>
+    <title>In My Family App, Every Agent Borrows One Person's Permissions - Scott Miller</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+
+  <body class="font-mono" style="background-image:url('../../topo.png');">
+    <div class="max-w-3xl mx-auto px-4 py-10 md:py-16">
+      <header class="mb-8">
+        <a href="../" class="text-sm hover:underline">&larr; back to blog</a>
+        <h1 class="text-2xl font-bold mt-4 mb-1">In My Family App, Every Agent Borrows One Person's Permissions</h1>
+        <div class="text-sm text-neutral-700">November 26, 2026</div>
+        <p class="mt-2 text-neutral-800">When I built Kin, a small private app for my household's people, dates and providers, the most important design rule was that an agent never gets its own access, only a slice of the person who owns it.</p>
+      </header>
+
+      <article class="bg-white/90 shadow rounded-lg p-6 md:p-8 space-y-4 max-w-prose mx-auto">
+<p>I built a small private app for my household called Kin. It keeps track of the people we care about, the providers we rely on (doctors, the vet, contractors, school), the dates we should not forget, and the calls made on the family&#39;s behalf. It is the same shape as my other side projects: one Go binary, one SQLite file, Caddy in front, on the smallest droplet I could pick.</p>
+<p>What made Kin different was not the stack. It was who uses it. Every person in the house gets their own login, and so do my agents. I have an assistant that reads my inbox, one that helps with the calendar, and bots that place calls. All of them are useful inside an app like this. All of them are also exactly the kind of thing that should not be able to see everything.</p>
+<p>So the rule I started from, before any screens, was simple: an agent never has its own access. It borrows a slice of one person&#39;s.</p>
+<h2>An agent belongs to a member</h2>
+<p>In Kin, every agent belongs to one household member. It acts with that member&#39;s visibility, never more. If I can&#39;t see a record, my agent can&#39;t either. If my agent has a narrower scope than I do, it sees less than I do.</p>
+<p>That sounds obvious when you write it down. It is not how a lot of integrations work. The common pattern is a service account or an API key that sits beside the users with its own, usually generous, permissions. That is convenient right up until you have to answer the question &#34;what could this thing have seen?&#34; With a service account, the honest answer is often &#34;all of it.&#34;</p>
+<p>When the agent borrows a person&#39;s permissions, the answer is &#34;whatever that person could see, minus what the scopes took away.&#34; That is a question I can actually answer.</p>
+<p>It also means the role model does real work. Kin has owner, admin, adult, teen and guest roles. Teens and guests can&#39;t own agents at all. A permission to read sensitive numbers can only be granted to an agent by a member whose role can see those numbers in the first place. You can&#39;t hand down what you don&#39;t have.</p>
+<h2>Scopes are small, and most of them read</h2>
+<p>The scopes are deliberately boring. There are read scopes for the things an agent needs to look up, and a few narrow write scopes: logging a call, appending an activity like a gift or a visit, and proposing a suggestion.</p>
+<p>What&#39;s missing matters more than what&#39;s there. There is no edit scope and no delete scope. There is no scope for writing general notes. There is no calendar write scope inside Kin, because my calendar assistant already owns calendar writes elsewhere and I didn&#39;t want two places that could change the same thing.</p>
+<p>The most useful write scope is the one that doesn&#39;t really write. When my inbox assistant sees a new contact in email, it can only propose that person through a suggestion. Nothing lands until a human approves it in a review queue: add as new, merge into an existing person, or dismiss. Kin checks for likely duplicates by email, phone and name when the suggestion comes in, so the review is a quick decision rather than detective work. Gift ideas an agent finds go through the same queue. Only real events, like a call that happened or a gift that was actually bought, get written directly, and those are append only.</p>
+<p>I have written before about giving agents a narrow door for posting. This is the same idea applied to data. The agent gets to knock. A person opens the door.</p>
+<h2>Hidden looks exactly like missing</h2>
+<p>One small rule I&#39;m glad I made early: a record you can&#39;t see answers 404, the same response as a record that doesn&#39;t exist.</p>
+<p>That applies to people in the house and to agents. An agent probing ids can&#39;t tell the difference between &#34;there is nothing here&#34; and &#34;there is something here you aren&#39;t allowed to see.&#34; For a family app that holds health-adjacent provider details and private notes, the existence of a record can be information on its own.</p>
+<p>Scopes are also checked before any lookup. If a token doesn&#39;t have the right scope, Kin doesn&#39;t go find the record first and then refuse. It refuses before it looks.</p>
+<p>To keep that honest, there is one visibility function that decides whether a viewer can see a record, and an equivalent SQL filter used for list pages. The tests check the two against each other across a pile of generated records, so a list page can&#39;t quietly show something the detail page would hide.</p>
+<h2>Tokens you can reason about</h2>
+<p>Agent tokens are shown once, when they&#39;re created or rotated. Kin stores only a hash and a short prefix, which is enough to recognize a token in a log without being able to use it. Rotating revokes the old token immediately. Revoking the agent, disabling its member, or taking away that member&#39;s right to own agents stops its tokens too. A token in a URL is refused. It has to come in the Authorization header.</p>
+<p>Each token also has daily limits on reads and writes, and an hourly cap on suggestions. None of my agents come close. The limits are there for the day one of them gets stuck in a loop at 3 AM.</p>
+<h2>Every agent gets a page</h2>
+<p>The feature I use most is the least technical one. Every agent has its own page showing who owns it, its token status, its scopes, its limits, and a feed of everything it has done: suggestions, activities, calls and API requests. People&#39;s records show &#34;Added by&#34; with a link back to that page.</p>
+<p>Behind it, every authenticated API request writes an audit row with the member, the agent, the token, the method, the path and the records it touched. I don&#39;t read the audit log for fun. I read the agent page. But knowing the full log is there is what lets me be relaxed about adding a new agent.</p>
+<h2>What I&#39;d tell anyone building for agents</h2>
+<p>If your app is going to have agents as users, and more apps are, I&#39;d start with three questions before designing anything else:</p>
+<ol>
+<li>Whose permissions does this agent borrow? If the answer is &#34;its own,&#34; think hard about why.</li>
+<li>What can it do without a person saying yes? Keep that list short and append only.</li>
+<li>Where do I go to see everything it did? If that takes a database query, build the page.</li>
+</ol>
+<p>None of this made Kin harder to build. Most of it is a few tables and one carefully tested function. It just has to be decided first, because retrofitting &#34;the agent can only see what its owner sees&#34; into an app that started with a shared API key is a much worse week than writing it in on day one.</p>
+      </article>
+
+      <section class="mt-10 bg-white/90 shadow rounded-lg p-6 md:p-8 max-w-prose mx-auto">
+        <h2 class="text-sm font-bold text-neutral-700 mb-3">More posts</h2>
+        <ul id="more-posts" class="space-y-2 text-sm"></ul>
+      </section>
+
+      <footer class="mt-10 flex items-center justify-center space-x-6 text-xs text-neutral-700">
+        <a href="https://github.com/scott" class="flex items-center space-x-1 hover:underline">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z" />
+          </svg>
+          <span>GitHub</span>
+        </a>
+        <a href="https://linkedin.com/in/optimizeit" class="flex items-center space-x-1 hover:underline">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z" />
+          </svg>
+          <span>LinkedIn</span>
+        </a>
+      </footer>
+    </div>
+
+    <script>
+      (function () {
+        var list = document.getElementById('more-posts');
+        if (!list) return;
+
+        var parts = window.location.pathname.split('/').filter(function (p) { return p.length > 0; });
+        var last = parts[parts.length - 1];
+        var currentSlug = (last === 'index.html' ? parts[parts.length - 2] : last) || '';
+
+        fetch('../posts.json')
+          .then(function (r) { return r.json(); })
+          .then(function (posts) {
+            var others = posts.filter(function (p) { return p.slug !== currentSlug; }).slice(0, 5);
+            if (others.length === 0) {
+              list.parentElement.style.display = 'none';
+              return;
+            }
+            list.innerHTML = others.map(function (post) {
+              var date = new Date(post.date + 'T00:00:00').toLocaleDateString('en-US', {
+                year: 'numeric', month: 'long', day: 'numeric'
+              });
+              return (
+                '<li class="flex items-baseline space-x-2">' +
+                  '<a href="../' + post.slug + '/" class="hover:underline">' + post.title + '</a>' +
+                  '<span class="text-neutral-600">&middot;</span>' +
+                  '<span class="text-neutral-600">' + date + '</span>' +
+                '</li>'
+              );
+            }).join('');
+          })
+          .catch(function () { list.parentElement.style.display = 'none'; });
+      })();
+    </script>
+  </body>
+</html>
